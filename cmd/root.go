@@ -42,6 +42,7 @@ func init() {
 	rootCmd.PersistentFlags().StringP("config", "c", "config.toml", "config file path")
 
 	rootCmd.AddCommand(migrateCmd)
+	rootCmd.AddCommand(updateConfigSchema)
 }
 
 

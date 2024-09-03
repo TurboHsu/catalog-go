@@ -5,6 +5,7 @@ import (
 	"catalog-go/database"
 	"catalog-go/database/model"
 	"catalog-go/database/query"
+	"catalog-go/store"
 	"context"
 	"os"
 	"time"
@@ -32,6 +33,11 @@ func Place(file File, caption string, ctx context.Context) (err error) {
 	}
 	c := query.Use(database.DB).Cats
 	err = c.WithContext(ctx).Create(&cat)
+
+	go func(filename string)  {
+		store.PutFileHook(filename)
+	}(filename)
+	
 	return
 }
 

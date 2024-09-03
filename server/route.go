@@ -2,6 +2,7 @@ package server
 
 import (
 	"catalog-go/server/cat"
+	"catalog-go/server/static"
 	"context"
 	"log"
 	"net/http"
@@ -20,7 +21,8 @@ func Run(addr string, ctx context.Context) {
 	})
 
 	cat.ConfigureRoute(r)
-
+	static.ConfigureRoute(r)
+	
 	srv := &http.Server{
 		Addr:    addr,
 		Handler: r,

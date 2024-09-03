@@ -18,6 +18,15 @@ type Database struct {
 
 type Store struct {
 	StorePath string
+	Qiniu Qiniu
+}
+
+type Qiniu struct {
+	Enable bool
+	AccessKey string
+	SecretKey string
+	Bucket string
+	UploadPath string
 }
 
 type Receiver struct {
@@ -47,7 +56,7 @@ func DefaultConfig() Config {
 			},
 		},
 		Store: Store{
-			StorePath: "./store",
+			StorePath: "./static",
 		},
 	}
 }
