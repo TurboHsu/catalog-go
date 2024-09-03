@@ -3,6 +3,7 @@ package cmd
 import (
 	"catalog-go/config"
 	"catalog-go/database"
+	"catalog-go/receiver/telegram"
 	"catalog-go/server"
 	"context"
 	"log"
@@ -38,12 +39,28 @@ func runServer(cmd *cobra.Command, args []string) {
 	}()
 
 	// Start all services
+	registerGin(&wg, ctx)
+	registerTelegramBot(&wg, ctx)
+	
+	wg.Wait()
+	
+}
+
+func registerGin(wg *sync.WaitGroup, ctx context.Context) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		server.Run(config.CONFIG.Server.Listen, ctx)
 	}()
+}
 
-	wg.Wait()
-
+func registerTelegramBot(wg *sync.WaitGroup, ctx context.Context) {
+	if !config.CONFIG.Receiver.TelegramBot.Enable {
+		return
+	}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		telegram.Run(config.CONFIG.Receiver.TelegramBot.Token, ctx)
+	}()
 }

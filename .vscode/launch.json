@@ -7,7 +7,10 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
-            "env": {},
+            "env": {
+                "HTTP_PROXY": "http://localhost:2080",
+                "HTTPS_PROXY": "http://localhost:2080"
+            },
             "args": []
         }
     ]

@@ -4,6 +4,7 @@ type Config struct {
 	Server Server
 	Database Database
 	Receiver Receiver
+	Store Store
 }
 
 type Server struct {
@@ -15,6 +16,10 @@ type Database struct {
 	Path string
 }
 
+type Store struct {
+	StorePath string
+}
+
 type Receiver struct {
 	TelegramBot TelegramBot
 }
@@ -22,6 +27,7 @@ type Receiver struct {
 type TelegramBot struct {
 	Enable bool
 	Token string
+	PermittedUsers []int64
 }
 
 func DefaultConfig() Config {
@@ -37,7 +43,11 @@ func DefaultConfig() Config {
 			TelegramBot: TelegramBot{
 				Enable: false,
 				Token: "",
+				PermittedUsers: []int64{},
 			},
+		},
+		Store: Store{
+			StorePath: "./store",
 		},
 	}
 }

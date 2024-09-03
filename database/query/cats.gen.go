@@ -30,6 +30,7 @@ func newCats(db *gorm.DB, opts ...gen.DOOption) cats {
 	_cats.UUID = field.NewString(tableName, "uuid")
 	_cats.Caption = field.NewString(tableName, "caption")
 	_cats.Image = field.NewString(tableName, "image")
+	_cats.CreatedAt = field.NewTime(tableName, "created_at")
 
 	_cats.fillFieldMap()
 
@@ -39,10 +40,11 @@ func newCats(db *gorm.DB, opts ...gen.DOOption) cats {
 type cats struct {
 	catsDo catsDo
 
-	ALL     field.Asterisk
-	UUID    field.String
-	Caption field.String
-	Image   field.String
+	ALL       field.Asterisk
+	UUID      field.String
+	Caption   field.String
+	Image     field.String
+	CreatedAt field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -62,6 +64,7 @@ func (c *cats) updateTableName(table string) *cats {
 	c.UUID = field.NewString(table, "uuid")
 	c.Caption = field.NewString(table, "caption")
 	c.Image = field.NewString(table, "image")
+	c.CreatedAt = field.NewTime(table, "created_at")
 
 	c.fillFieldMap()
 
@@ -86,10 +89,11 @@ func (c *cats) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *cats) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 3)
+	c.fieldMap = make(map[string]field.Expr, 4)
 	c.fieldMap["uuid"] = c.UUID
 	c.fieldMap["caption"] = c.Caption
 	c.fieldMap["image"] = c.Image
+	c.fieldMap["created_at"] = c.CreatedAt
 }
 
 func (c cats) clone(db *gorm.DB) cats {
