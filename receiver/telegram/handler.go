@@ -107,7 +107,7 @@ func postHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 func accessDeniedHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID: update.Message.Chat.ID,
-		Text:   "The cat god has denied you access to this command",
+		Text:   "The cat god has denied your access to this command",
 	})
 }
 
