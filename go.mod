@@ -8,7 +8,7 @@ require (
 	github.com/go-telegram/bot v1.7.2
 	github.com/google/uuid v1.6.0
 	github.com/pelletier/go-toml/v2 v2.2.3
-	github.com/qiniu/go-sdk/v7 v7.22.0
+	github.com/qiniu/go-sdk/v7 v7.21.1
 	github.com/spf13/cobra v1.8.1
 	gorm.io/driver/sqlite v1.5.6
 	gorm.io/gen v0.3.26
@@ -23,10 +23,7 @@ require (
 	github.com/bytedance/sonic/loader v0.2.0 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/iasm v0.2.0 // indirect
-	github.com/elastic/go-sysinfo v1.0.2 // indirect
-	github.com/elastic/go-windows v1.0.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.5 // indirect
-	github.com/gammazero/toposort v0.1.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
@@ -37,16 +34,14 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/joeshaw/multierror v0.0.0-20140124173710-69b34d4ec901 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.8 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
+	github.com/matishsiao/goInfo v0.0.0-20210923090445-da2e3fa8d45f // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/pkg/errors v0.8.1 // indirect
-	github.com/prometheus/procfs v0.0.0-20190425082905-87a4384529e0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
@@ -63,6 +58,4 @@ require (
 	gorm.io/datatypes v1.1.1-0.20230130040222-c43177d3cf8c // indirect
 	gorm.io/driver/mysql v1.5.6 // indirect
 	gorm.io/hints v1.1.0 // indirect
-	howett.net/plist v0.0.0-20181124034731-591f970eefbb // indirect
-	modernc.org/fileutil v1.3.0 // indirect
 )
