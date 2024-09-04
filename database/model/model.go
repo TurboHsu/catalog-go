@@ -3,12 +3,12 @@ package model
 import "time"
 
 var ALL = []interface{}{
-	Cats{},
+    Cats{},
 }
 
 type Cats struct {
-	UUID      string `gorm:"primaryKey"`
-	Caption   string
-	Image     string
-	CreatedAt time.Time
+    UUID      string    `gorm:"primaryKey" json:"uuid"`
+    Caption   string    `json:"caption"`
+    Image     string    `json:"image"`
+    CreatedAt time.Time `json:"created_at"`
 }
