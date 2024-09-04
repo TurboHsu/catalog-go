@@ -1,6 +1,7 @@
 package server
 
 import (
+	"catalog-go/config"
 	"catalog-go/server/cat"
 	"catalog-go/server/static"
 	"context"
@@ -8,11 +9,17 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func Run(addr string, ctx context.Context) {
 	r := gin.Default()
+
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowOrigins = config.CONFIG.Server.AllowOrigins
+	r.Use(cors.New(corsConfig))
+
 
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{

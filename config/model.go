@@ -9,6 +9,7 @@ type Config struct {
 
 type Server struct {
 	Listen string
+	AllowOrigins []string
 }
 
 type Database struct {
@@ -43,6 +44,7 @@ func DefaultConfig() Config {
 	return Config{
 		Server: Server{
 			Listen: ":28081",
+			AllowOrigins: []string{""},
 		},
 		Database: Database{
 			Type: "sqlite3",
