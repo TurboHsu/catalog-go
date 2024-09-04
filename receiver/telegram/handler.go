@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"sync"
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
@@ -14,6 +15,7 @@ var mediaMap = map[string][]FileID{}
 type FileID struct {
 	Raw       string
 	Thumbnail string
+	Caption   string
 }
 
 func idHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
@@ -49,9 +51,8 @@ func postHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		return
 	}
 
-	caption := update.Message.ReplyToMessage.Caption
-
 	if update.Message.ReplyToMessage.MediaGroupID == "" {
+		caption := update.Message.ReplyToMessage.Caption
 		err := handleCat(b, ctx, update.Message.ReplyToMessage.Photo[len(update.Message.ReplyToMessage.Photo)-1].FileID,
 			update.Message.ReplyToMessage.Photo[2].FileID, caption)
 		if err != nil {
@@ -77,17 +78,24 @@ func postHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 			log.Printf("[E] Failed to get file: media group not found in map\n")
 			return
 		}
+		var wg sync.WaitGroup
 		for _, id := range ids {
-			err := handleCat(b, ctx, id.Raw, id.Thumbnail, caption)
-			if err != nil {
-				b.SendMessage(ctx, &bot.SendMessageParams{
-					ChatID: update.Message.Chat.ID,
-					Text:   "Failed to get file",
-				})
-				log.Printf("[E] Failed to get file: %v\n", err)
-				return
-			}
+			wg.Add(1)
+			go func(id FileID) {
+				err := handleCat(b, ctx, id.Raw, id.Thumbnail, id.Caption)
+				if err != nil {
+					b.SendMessage(ctx, &bot.SendMessageParams{
+						ChatID: update.Message.Chat.ID,
+						Text:   "Failed to get file",
+					})
+					log.Printf("[E] Failed to get file: %v\n", err)
+					return
+				}
+				wg.Done()
+			}(id)
 		}
+
+		wg.Wait()
 
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
@@ -121,6 +129,7 @@ func mediaGroupMiddleware(next bot.HandlerFunc) bot.HandlerFunc {
 				FileID{
 					Raw:       update.Message.Photo[len(update.Message.Photo)-1].FileID,
 					Thumbnail: update.Message.Photo[2].FileID,
+					Caption:   update.Message.Caption,
 				})
 		}
 		next(ctx, b, update)
