@@ -30,7 +30,7 @@ func getHandler(c *gin.Context) {
 	page := 1
 	pageSize := 10
 	var err error
-	
+
 	if p, ok := c.GetQuery("page"); ok && p != "" {
 		page, err = strconv.Atoi(p)
 		if page < 1 {
@@ -71,5 +71,31 @@ func getHandler(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{
 		"data": cats,
+	})
+}
+
+func getByIdHandler(c *gin.Context) {
+	uuid, ok := c.GetQuery("uuid")
+	if !ok {
+		c.JSON(400, gin.H{
+			"error": "bad request",
+		})
+		return
+	}
+
+	q := query.Use(database.DB)
+	cat, err := q.WithContext(c.Request.Context()).Cats.
+		Where(q.Cats.UUID.Eq(uuid)).
+		First()
+
+	if err != nil {
+		c.JSON(404, gin.H{
+			"error": "not found",
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"data": cat,
 	})
 }
