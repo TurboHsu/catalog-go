@@ -9,7 +9,12 @@ import (
 	"github.com/go-telegram/bot/models"
 )
 
-var mediaMap = map[string][]string{}
+var mediaMap = map[string][]FileID{}
+
+type FileID struct {
+	Raw       string
+	Thumbnail string
+}
 
 func idHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	userId := update.Message.From.ID
@@ -47,7 +52,8 @@ func postHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	caption := update.Message.ReplyToMessage.Caption
 
 	if update.Message.ReplyToMessage.MediaGroupID == "" {
-		err := handleCat(b, ctx, update.Message.ReplyToMessage.Photo[len(update.Message.ReplyToMessage.Photo)-1].FileID, caption)
+		err := handleCat(b, ctx, update.Message.ReplyToMessage.Photo[len(update.Message.ReplyToMessage.Photo)-1].FileID,
+			update.Message.ReplyToMessage.Photo[2].FileID, caption)
 		if err != nil {
 			b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID: update.Message.Chat.ID,
@@ -72,7 +78,7 @@ func postHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 			return
 		}
 		for _, id := range ids {
-			err := handleCat(b, ctx, id, caption)
+			err := handleCat(b, ctx, id.Raw, id.Thumbnail, caption)
 			if err != nil {
 				b.SendMessage(ctx, &bot.SendMessageParams{
 					ChatID: update.Message.Chat.ID,
@@ -112,7 +118,10 @@ func mediaGroupMiddleware(next bot.HandlerFunc) bot.HandlerFunc {
 	return func(ctx context.Context, b *bot.Bot, update *models.Update) {
 		if update.Message.MediaGroupID != "" && update.Message.Photo != nil {
 			mediaMap[update.Message.MediaGroupID] = append(mediaMap[update.Message.MediaGroupID],
-				update.Message.Photo[len(update.Message.Photo)-1].FileID)
+				FileID{
+					Raw:       update.Message.Photo[len(update.Message.Photo)-1].FileID,
+					Thumbnail: update.Message.Photo[2].FileID,
+				})
 		}
 		next(ctx, b, update)
 	}

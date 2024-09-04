@@ -27,9 +27,9 @@ func downloadFileToBuffer(link string) ([]byte, error) {
 	return data, nil
 }
 
-func handleCat(b *bot.Bot, ctx context.Context, fileId string, caption string) error {
+func handleCat(b *bot.Bot, ctx context.Context, raw string, thumbnail string, caption string) error {
 	f, err := b.GetFile(ctx, &bot.GetFileParams{
-		FileID: fileId,
+		FileID: raw,
 	})
 	if err != nil {
 		return err
@@ -41,8 +41,28 @@ func handleCat(b *bot.Bot, ctx context.Context, fileId string, caption string) e
 		return err
 	}
 
-	return cat.Place(cat.File{
+	rawImage := cat.File{
 		Buffer: buf,
 		Type:   "png",
-	}, caption, ctx)
+	}
+
+	f, err = b.GetFile(ctx, &bot.GetFileParams{
+		FileID: thumbnail,
+	})
+	if err != nil {
+		return err
+	}
+
+	link = b.FileDownloadLink(f)
+	buf, err = downloadFileToBuffer(link)
+	if err != nil {
+		return err
+	}
+
+	thumbnailImage := cat.File{
+		Buffer: buf,
+		Type:   "png",
+	}
+
+	return cat.Place(rawImage, thumbnailImage, caption, ctx)
 }

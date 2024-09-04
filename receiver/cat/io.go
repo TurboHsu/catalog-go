@@ -13,14 +13,20 @@ import (
 	"github.com/google/uuid"
 )
 
-func Place(file File, caption string, ctx context.Context) (err error) {
+func Place(image File, thumbnail File, caption string, ctx context.Context) (err error) {
 	uuid := uuid.NewString()
 	// Save file
-	filename := config.CONFIG.Store.StorePath + "/" + uuid + "." + file.Type
+	filename := config.CONFIG.Store.StorePath + "/" + uuid + "." + image.Type
 	if _, err := os.Stat(config.CONFIG.Store.StorePath); os.IsNotExist(err) {
 		os.Mkdir(config.CONFIG.Store.StorePath, 0755)
 	}
-	err = os.WriteFile(filename, file.Buffer, 0644)
+	err = os.WriteFile(filename, image.Buffer, 0644)
+	if err != nil {
+		return err
+	}
+
+	thumbnailFilename := config.CONFIG.Store.StorePath + "/" + uuid + "." + "thumbnail" +  "." + thumbnail.Type
+	err = os.WriteFile(thumbnailFilename, thumbnail.Buffer, 0644)
 	if err != nil {
 		return err
 	}
@@ -28,7 +34,8 @@ func Place(file File, caption string, ctx context.Context) (err error) {
 	cat := model.Cats{
 		UUID:   uuid,
 		Caption: caption,
-		Image: uuid + "." + file.Type,
+		Image: uuid + "." + image.Type,
+		Thumbnail: uuid + "." + "thumbnail" +  "." + thumbnail.Type,
 		CreatedAt: time.Now(),
 	}
 	c := query.Use(database.DB).Cats
@@ -36,6 +43,7 @@ func Place(file File, caption string, ctx context.Context) (err error) {
 
 	go func(filename string)  {
 		store.PutFileHook(filename)
+		store.PutFileHook(thumbnailFilename)
 	}(filename)
 	
 	return

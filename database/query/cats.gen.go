@@ -30,6 +30,7 @@ func newCats(db *gorm.DB, opts ...gen.DOOption) cats {
 	_cats.UUID = field.NewString(tableName, "uuid")
 	_cats.Caption = field.NewString(tableName, "caption")
 	_cats.Image = field.NewString(tableName, "image")
+	_cats.Thumbnail = field.NewString(tableName, "thumbnail")
 	_cats.CreatedAt = field.NewTime(tableName, "created_at")
 
 	_cats.fillFieldMap()
@@ -44,6 +45,7 @@ type cats struct {
 	UUID      field.String
 	Caption   field.String
 	Image     field.String
+	Thumbnail field.String
 	CreatedAt field.Time
 
 	fieldMap map[string]field.Expr
@@ -64,6 +66,7 @@ func (c *cats) updateTableName(table string) *cats {
 	c.UUID = field.NewString(table, "uuid")
 	c.Caption = field.NewString(table, "caption")
 	c.Image = field.NewString(table, "image")
+	c.Thumbnail = field.NewString(table, "thumbnail")
 	c.CreatedAt = field.NewTime(table, "created_at")
 
 	c.fillFieldMap()
@@ -89,10 +92,11 @@ func (c *cats) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *cats) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 4)
+	c.fieldMap = make(map[string]field.Expr, 5)
 	c.fieldMap["uuid"] = c.UUID
 	c.fieldMap["caption"] = c.Caption
 	c.fieldMap["image"] = c.Image
+	c.fieldMap["thumbnail"] = c.Thumbnail
 	c.fieldMap["created_at"] = c.CreatedAt
 }
 
