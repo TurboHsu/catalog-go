@@ -15,6 +15,7 @@ type Server struct {
 type Database struct {
 	Type string
 	Path string
+	AllowedReactions []string
 }
 
 type Store struct {
@@ -49,6 +50,7 @@ func DefaultConfig() Config {
 		Database: Database{
 			Type: "sqlite3",
 			Path: "database.db",
+			AllowedReactions: []string{"like", "dislike"}, // TODO: add more reactions
 		},
 		Receiver: Receiver{
 			TelegramBot: TelegramBot{

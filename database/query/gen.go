@@ -17,23 +17,26 @@ import (
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:   db,
-		Cats: newCats(db, opts...),
+		db:        db,
+		Cats:      newCats(db, opts...),
+		Reactions: newReactions(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	Cats cats
+	Cats      cats
+	Reactions reactions
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:   db,
-		Cats: q.Cats.clone(db),
+		db:        db,
+		Cats:      q.Cats.clone(db),
+		Reactions: q.Reactions.clone(db),
 	}
 }
 
@@ -47,18 +50,21 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:   db,
-		Cats: q.Cats.replaceDB(db),
+		db:        db,
+		Cats:      q.Cats.replaceDB(db),
+		Reactions: q.Reactions.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	Cats *catsDo
+	Cats      *catsDo
+	Reactions *reactionsDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		Cats: q.Cats.WithContext(ctx),
+		Cats:      q.Cats.WithContext(ctx),
+		Reactions: q.Reactions.WithContext(ctx),
 	}
 }
 

@@ -9,23 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getAllHandler(c *gin.Context) {
-	q := query.Use(database.DB)
-
-	// Get all cat
-	cats, err := q.WithContext(c.Request.Context()).Cats.Find()
-	if err != nil {
-		c.JSON(500, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	c.JSON(200, gin.H{
-		"data": cats,
-	})
-}
-
 func getHandler(c *gin.Context) {
 	page := 1
 	pageSize := 10
@@ -55,13 +38,26 @@ func getHandler(c *gin.Context) {
 			return
 		}
 	}
+	fingerprint, ok := c.GetQuery("fingerprint")
+	if !ok || fingerprint == "" {
+		c.JSON(400, gin.H{
+			"error": "bad fingerprint",
+		})
+		return
+	}
 
 	q := query.Use(database.DB)
 	cats, err := q.WithContext(c.Request.Context()).Cats.
+		Preload(q.Cats.Reactions).
 		Order(q.Cats.CreatedAt.Desc()).
 		Limit(pageSize).
 		Offset((page - 1) * pageSize).
 		Find()
+	
+	data := make([]CatResponse, len(cats))
+	for i, cat := range cats {
+		data[i].FromCats(cat, fingerprint)
+	}
 
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -70,7 +66,7 @@ func getHandler(c *gin.Context) {
 		return
 	}
 	c.JSON(200, gin.H{
-		"data": cats,
+		"data": data,
 	})
 }
 

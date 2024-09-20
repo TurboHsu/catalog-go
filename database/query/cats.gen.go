@@ -32,6 +32,11 @@ func newCats(db *gorm.DB, opts ...gen.DOOption) cats {
 	_cats.Image = field.NewString(tableName, "image")
 	_cats.Thumbnail = field.NewString(tableName, "thumbnail")
 	_cats.CreatedAt = field.NewTime(tableName, "created_at")
+	_cats.Reactions = catsHasManyReactions{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Reactions", "model.Reactions"),
+	}
 
 	_cats.fillFieldMap()
 
@@ -47,6 +52,7 @@ type cats struct {
 	Image     field.String
 	Thumbnail field.String
 	CreatedAt field.Time
+	Reactions catsHasManyReactions
 
 	fieldMap map[string]field.Expr
 }
@@ -92,12 +98,13 @@ func (c *cats) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *cats) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 5)
+	c.fieldMap = make(map[string]field.Expr, 6)
 	c.fieldMap["uuid"] = c.UUID
 	c.fieldMap["caption"] = c.Caption
 	c.fieldMap["image"] = c.Image
 	c.fieldMap["thumbnail"] = c.Thumbnail
 	c.fieldMap["created_at"] = c.CreatedAt
+
 }
 
 func (c cats) clone(db *gorm.DB) cats {
@@ -108,6 +115,77 @@ func (c cats) clone(db *gorm.DB) cats {
 func (c cats) replaceDB(db *gorm.DB) cats {
 	c.catsDo.ReplaceDB(db)
 	return c
+}
+
+type catsHasManyReactions struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a catsHasManyReactions) Where(conds ...field.Expr) *catsHasManyReactions {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a catsHasManyReactions) WithContext(ctx context.Context) *catsHasManyReactions {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a catsHasManyReactions) Session(session *gorm.Session) *catsHasManyReactions {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a catsHasManyReactions) Model(m *model.Cats) *catsHasManyReactionsTx {
+	return &catsHasManyReactionsTx{a.db.Model(m).Association(a.Name())}
+}
+
+type catsHasManyReactionsTx struct{ tx *gorm.Association }
+
+func (a catsHasManyReactionsTx) Find() (result []*model.Reactions, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a catsHasManyReactionsTx) Append(values ...*model.Reactions) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a catsHasManyReactionsTx) Replace(values ...*model.Reactions) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a catsHasManyReactionsTx) Delete(values ...*model.Reactions) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a catsHasManyReactionsTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a catsHasManyReactionsTx) Count() int64 {
+	return a.tx.Count()
 }
 
 type catsDo struct{ gen.DO }
