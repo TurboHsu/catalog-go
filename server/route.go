@@ -20,7 +20,6 @@ func Run(addr string, ctx context.Context) {
 	corsConfig.AllowOrigins = config.CONFIG.Server.AllowOrigins
 	r.Use(cors.New(corsConfig))
 
-
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "catalog-go",
@@ -29,7 +28,7 @@ func Run(addr string, ctx context.Context) {
 
 	cat.ConfigureRoute(r)
 	static.ConfigureRoute(r)
-	
+
 	srv := &http.Server{
 		Addr:    addr,
 		Handler: r,

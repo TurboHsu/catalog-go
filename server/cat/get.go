@@ -53,7 +53,7 @@ func getHandler(c *gin.Context) {
 		Limit(pageSize).
 		Offset((page - 1) * pageSize).
 		Find()
-	
+
 	data := make([]CatResponse, len(cats))
 	for i, cat := range cats {
 		data[i].FromCats(cat, fingerprint)

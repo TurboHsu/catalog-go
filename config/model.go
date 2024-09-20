@@ -1,33 +1,33 @@
 package config
 
 type Config struct {
-	Server Server
+	Server   Server
 	Database Database
 	Receiver Receiver
-	Store Store
+	Store    Store
 }
 
 type Server struct {
-	Listen string
+	Listen       string
 	AllowOrigins []string
 }
 
 type Database struct {
-	Type string
-	Path string
+	Type             string
+	Path             string
 	AllowedReactions []string
 }
 
 type Store struct {
 	StorePath string
-	Qiniu Qiniu
+	Qiniu     Qiniu
 }
 
 type Qiniu struct {
-	Enable bool
-	AccessKey string
-	SecretKey string
-	Bucket string
+	Enable     bool
+	AccessKey  string
+	SecretKey  string
+	Bucket     string
 	UploadPath string
 }
 
@@ -36,26 +36,26 @@ type Receiver struct {
 }
 
 type TelegramBot struct {
-	Enable bool
-	Token string
+	Enable         bool
+	Token          string
 	PermittedUsers []int64
 }
 
 func DefaultConfig() Config {
 	return Config{
 		Server: Server{
-			Listen: ":28081",
+			Listen:       ":28081",
 			AllowOrigins: []string{""},
 		},
 		Database: Database{
-			Type: "sqlite3",
-			Path: "database.db",
+			Type:             "sqlite3",
+			Path:             "database.db",
 			AllowedReactions: []string{"like", "dislike"}, // TODO: add more reactions
 		},
 		Receiver: Receiver{
 			TelegramBot: TelegramBot{
-				Enable: false,
-				Token: "",
+				Enable:         false,
+				Token:          "",
 				PermittedUsers: []int64{},
 			},
 		},

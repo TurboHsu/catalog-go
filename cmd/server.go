@@ -41,9 +41,9 @@ func runServer(cmd *cobra.Command, args []string) {
 	// Start all services
 	registerGin(&wg, ctx)
 	registerTelegramBot(&wg, ctx)
-	
+
 	wg.Wait()
-	
+
 }
 
 func registerGin(wg *sync.WaitGroup, ctx context.Context) {

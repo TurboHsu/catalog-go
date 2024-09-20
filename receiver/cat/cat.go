@@ -25,31 +25,31 @@ func Place(image File, thumbnail File, caption string, ctx context.Context) (err
 		return err
 	}
 
-	thumbnailFilename := config.CONFIG.Store.StorePath + "/" + uuid + "." + "thumbnail" +  "." + thumbnail.Type
+	thumbnailFilename := config.CONFIG.Store.StorePath + "/" + uuid + "." + "thumbnail" + "." + thumbnail.Type
 	err = os.WriteFile(thumbnailFilename, thumbnail.Buffer, 0644)
 	if err != nil {
 		return err
 	}
 
 	cat := model.Cats{
-		UUID:   uuid,
-		Caption: caption,
-		Image: uuid + "." + image.Type,
-		Thumbnail: uuid + "." + "thumbnail" +  "." + thumbnail.Type,
+		UUID:      uuid,
+		Caption:   caption,
+		Image:     uuid + "." + image.Type,
+		Thumbnail: uuid + "." + "thumbnail" + "." + thumbnail.Type,
 		CreatedAt: time.Now(),
 	}
 	c := query.Use(database.DB).Cats
 	err = c.WithContext(ctx).Create(&cat)
 
-	go func(filename string)  {
+	go func(filename string) {
 		store.PutFileHook(filename)
 		store.PutFileHook(thumbnailFilename)
 	}(filename)
-	
+
 	return
 }
 
 type File struct {
 	Buffer []byte
-	Type  string // Extension
+	Type   string // Extension
 }

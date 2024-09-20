@@ -20,7 +20,6 @@ func (c *Config) Load(path string) (err error) {
 		}
 		log.Fatalf("[F] Failed to load config: %v\n", err)
 	}
-			
 
 	buf, err := os.ReadFile(path)
 	if err != nil {

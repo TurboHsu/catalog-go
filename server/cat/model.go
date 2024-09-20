@@ -36,7 +36,7 @@ func (r *CatResponse) FromCats(cat *model.Cats, fingerprint string) error {
 			if err != nil {
 				return err
 			}
-			
+
 			r.Reactions = append(r.Reactions, Reactions{
 				Emoji:     reaction.Emoji,
 				Count:     len(clients),

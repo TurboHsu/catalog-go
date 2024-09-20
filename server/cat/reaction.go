@@ -37,8 +37,7 @@ func addReactionHandler(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "cat not found"})
 		return
 	}
-	
-	
+
 	if reactionExist(cat, reaction) {
 		reaction, err := q.WithContext(c.Request.Context()).Reactions.Where(q.Reactions.CatUUID.Eq(catUUID),
 			q.Reactions.Emoji.Eq(reaction)).First()
@@ -102,7 +101,7 @@ func removeReactionHandler(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "reaction remove error"})
 		return
 	}
-	
+
 	err = q.WithContext(c.Request.Context()).Reactions.Save(reactionObj)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "reaction save error"})
