@@ -44,5 +44,9 @@ func (r *CatResponse) FromCats(cat *model.Cats, fingerprint string) error {
 			})
 		}
 	}
+
+	if len(r.Reactions) == 0 {
+		r.Reactions = []Reactions{}
+	}
 	return nil
 }
