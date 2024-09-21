@@ -10,6 +10,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func getValidReactions(c *gin.Context) {
+	c.JSON(200, gin.H{"data": config.CONFIG.Database.AllowedReactions})
+}
+
 func addReactionHandler(c *gin.Context) {
 	fingerprint, ok := c.GetQuery("fingerprint")
 	if !ok || fingerprint == "" {

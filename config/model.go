@@ -48,9 +48,20 @@ func DefaultConfig() Config {
 			AllowOrigins: []string{""},
 		},
 		Database: Database{
-			Type:             "sqlite3",
-			Path:             "database.db",
-			AllowedReactions: []string{"like", "dislike"}, // TODO: add more reactions
+			Type: "sqlite3",
+			Path: "database.db",
+			AllowedReactions: []string{
+				"😺",
+				"😸",
+				"😹",
+				"😻",
+				"😼",
+				"😽",
+				"🙀",
+				"😿",
+				"😾",
+				"🐱",
+			},
 		},
 		Receiver: Receiver{
 			TelegramBot: TelegramBot{

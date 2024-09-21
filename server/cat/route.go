@@ -7,4 +7,5 @@ func ConfigureRoute(r *gin.Engine) {
 	r.GET("/api/cat/get_by_id", getByIdHandler)
 	r.GET("/api/cat/add_reaction", addReactionHandler)
 	r.GET("/api/cat/remove_reaction", removeReactionHandler)
+	r.GET("/api/cat/valid_reactions", getValidReactions)
 }
