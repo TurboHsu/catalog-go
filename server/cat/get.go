@@ -78,9 +78,17 @@ func getByIdHandler(c *gin.Context) {
 		})
 		return
 	}
+	fingerprint, ok := c.GetQuery("fingerprint")
+	if !ok || fingerprint == "" {
+		c.JSON(400, gin.H{
+			"error": "bad fingerprint",
+		})
+		return
+	}
 
 	q := query.Use(database.DB)
 	cat, err := q.WithContext(c.Request.Context()).Cats.
+		Preload(q.Cats.Reactions).
 		Where(q.Cats.UUID.Eq(uuid)).
 		First()
 
@@ -91,7 +99,16 @@ func getByIdHandler(c *gin.Context) {
 		return
 	}
 
+	var data CatResponse
+	err = data.FromCats(cat, fingerprint)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
 	c.JSON(200, gin.H{
-		"data": cat,
+		"data": data,
 	})
 }
