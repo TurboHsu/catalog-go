@@ -69,6 +69,7 @@ func postHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		})
 	} else { // Media group
 		ids, ok := mediaMap[update.Message.ReplyToMessage.MediaGroupID]
+		caption := update.Message.ReplyToMessage.Caption
 		defer delete(mediaMap, update.Message.ReplyToMessage.MediaGroupID)
 		if !ok {
 			b.SendMessage(ctx, &bot.SendMessageParams{
@@ -82,7 +83,7 @@ func postHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		for _, id := range ids {
 			wg.Add(1)
 			go func(id FileID) {
-				err := handleCat(b, ctx, id.Raw, id.Thumbnail, id.Caption)
+				err := handleCat(b, ctx, id.Raw, id.Thumbnail, caption)
 				if err != nil {
 					b.SendMessage(ctx, &bot.SendMessageParams{
 						ChatID: update.Message.Chat.ID,

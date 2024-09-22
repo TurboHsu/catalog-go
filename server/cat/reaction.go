@@ -20,6 +20,10 @@ func addReactionHandler(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "fingerprint not provided"})
 		return
 	}
+	if len(fingerprint) > 32 {
+		c.JSON(400, gin.H{"error": "fingerprint too long"})
+		return
+	}
 	catUUID, ok := c.GetQuery("cat")
 	if !ok {
 		c.JSON(400, gin.H{"error": "cat not provided"})
