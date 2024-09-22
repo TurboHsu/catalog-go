@@ -26,7 +26,7 @@ func killHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	if len(args) < 2 {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
-			Text:   "Usage: /kill <media type> <file id>",
+			Text:   "Usage: /kill <uuid>",
 		})
 		return
 	}
