@@ -1,9 +1,11 @@
 package telegram
 
 import (
+	"catalog-go/receiver/cat"
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"sync"
 
 	"github.com/go-telegram/bot"
@@ -16,6 +18,31 @@ type FileID struct {
 	Raw       string
 	Thumbnail string
 	Caption   string
+}
+
+func killHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
+	raw := update.Message.Text
+	args := strings.Split(raw, " ")
+	if len(args) < 2 {
+		b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: update.Message.Chat.ID,
+			Text:   "Usage: /kill <media type> <file id>",
+		})
+		return
+	}
+	uuid := args[1]
+	err := cat.Remove(uuid, ctx)
+	if err != nil {
+		b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: update.Message.Chat.ID,
+			Text:   "Error: " + err.Error(),
+		})
+		return
+	}
+	b.SendMessage(ctx, &bot.SendMessageParams{
+		ChatID: update.Message.Chat.ID,
+		Text:   "Killed " + uuid,
+	})
 }
 
 func idHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
@@ -82,6 +109,8 @@ func postHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		var wg sync.WaitGroup
 		for _, id := range ids {
 			wg.Add(1)
+
+			// Delete reaction
 			go func(id FileID) {
 				err := handleCat(b, ctx, id.Raw, id.Thumbnail, caption)
 				if err != nil {

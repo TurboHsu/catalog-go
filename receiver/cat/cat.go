@@ -49,6 +49,28 @@ func Place(image File, thumbnail File, caption string, ctx context.Context) (err
 	return
 }
 
+func Remove(uuid string, ctx context.Context) (err error) {
+	q := query.Use(database.DB)
+	cat, err := q.WithContext(ctx).Cats.Preload(q.Cats.Reactions).Where(q.Cats.UUID.Eq(uuid)).First()
+	if err != nil {
+		return err
+	}
+
+	for _, r := range cat.Reactions {
+		reaction, err := q.WithContext(ctx).Reactions.Where(q.Reactions.ID.Eq(r.ID)).First()
+		if err != nil {
+			return err
+		}
+		_, err = q.WithContext(ctx).Reactions.Delete(reaction)
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = q.WithContext(ctx).Cats.Delete(cat)
+	return err
+}
+
 type File struct {
 	Buffer []byte
 	Type   string // Extension

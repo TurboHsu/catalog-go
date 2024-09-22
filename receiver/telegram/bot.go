@@ -24,6 +24,7 @@ func Run(token string, ctx context.Context) {
 
 	b.RegisterHandler(bot.HandlerTypeMessageText, "/ping", bot.MatchTypeExact, authenticateMiddleware(pingHandler))
 	b.RegisterHandler(bot.HandlerTypeMessageText, "/post", bot.MatchTypeExact, authenticateMiddleware(postHandler))
+	b.RegisterHandler(bot.HandlerTypeMessageText, "/kill", bot.MatchTypePrefix, authenticateMiddleware(killHandler))
 
 	b.Start(ctx)
 }
