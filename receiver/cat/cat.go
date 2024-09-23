@@ -41,10 +41,10 @@ func Place(image File, thumbnail File, caption string, ctx context.Context) (err
 	c := query.Use(database.DB).Cats
 	err = c.WithContext(ctx).Create(&cat)
 
-	go func(filename string) {
+	go func(filename string, thumbnailFilename string) {
 		store.PutFileHook(filename)
 		store.PutFileHook(thumbnailFilename)
-	}(filename)
+	}(filename, thumbnailFilename)
 
 	return
 }
@@ -66,6 +66,16 @@ func Remove(uuid string, ctx context.Context) (err error) {
 			return err
 		}
 	}
+
+	// Delete file
+	filename := config.CONFIG.Store.StorePath + "/" + cat.Image
+	thumbnailFilename := config.CONFIG.Store.StorePath + "/" + cat.Thumbnail
+	os.Remove(filename)
+	os.Remove(thumbnailFilename)
+	go func(filename string, thumbnailFilename string) {
+		store.RemoveFileHook(filename)
+		store.RemoveFileHook(thumbnailFilename)
+	}(filename, thumbnailFilename)
 
 	_, err = q.WithContext(ctx).Cats.Delete(cat)
 	return err

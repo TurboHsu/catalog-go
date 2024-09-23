@@ -15,3 +15,13 @@ func PutFileHook(path string) error {
 
 	return nil
 }
+
+func RemoveFileHook(path string) error {
+	if config.CONFIG.Store.Qiniu.Enable {
+		err := qiniu.RemoveFile(path)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

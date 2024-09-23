@@ -29,7 +29,7 @@ func PutFile(path string) error {
 	ret := storage.PutRet{}
 	putExtra := storage.PutExtra{
 		Params: map[string]string{
-			"x:name": "github logo",
+			"x:name": "catalog pic",
 		},
 	}
 	err := formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
@@ -38,5 +38,22 @@ func PutFile(path string) error {
 		return err
 	}
 	log.Printf("[I] File uploaded to qiniu: %s\n", ret.Key)
+	return nil
+}
+
+func RemoveFile(path string) error {
+	c := config.CONFIG.Store.Qiniu
+	mac := auth.New(c.AccessKey, c.SecretKey)
+	cfg := storage.Config{
+		UseHTTPS: true,
+	}
+	bucketManager := storage.NewBucketManager(mac, &cfg)
+	key := c.UploadPath + "/" + path
+	err := bucketManager.Delete(c.Bucket, key)
+	if err != nil {
+		log.Printf("[E] Failed to remove file: %v\n", err)
+		return err
+	}
+	log.Printf("[I] File removed from qiniu: %s\n", key)
 	return nil
 }
