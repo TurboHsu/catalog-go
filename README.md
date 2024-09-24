@@ -1,12 +1,19 @@
 # Catalog-go
 
-Cats are good, so its a cat providing api server.
+## Getting started
+It logs cat. To get started, go with me
+```shell
+cd catalog-go
+go mod tidy
+go run . migrate
+go run .
+```
 
 ## Deployment
 
 ### Build
 
-To build the project, simply run `go build -ldflags "-s -w " .` to build the target binary.
+To officially build the project, simply run `go build -ldflags "-s -w " .` to build the target binary.
 
 And if you want a systemd configuration example, here it is:
 
@@ -26,10 +33,17 @@ WorkingDirectory=/opt/catalog-go
 WantedBy=default.target
 ```
 
-### Setting up
+## Configurations
+- Prerequisite: Getting started
 
-Run `./catalog-go migrate` to create/update the database schema.
+The configuration file is located at `config.toml` as a structure of the following
 
-Simply run `./catalog-go`. If no `config.toml` is found, the program will generate a config template for you, just fill it in!
-
-After configuring everything, just crank up the systemd service, and you're good to serve cats. _You may also need a gateway server like `caddy` to serve in HTTPS._
+- Server
+  - Listen: string address to listen on, corresponding to `VITE_BACKEND_ADDR`
+  - AllowOrigins: string array of CORS allowed-origins
+- Database
+  - Type: enumerate of `sqlite3` and nothing else
+  - Path: the string filename to the database
+  - AllowedReactions: string array of unicodes for possible reactions
+- Store
+  - StorePath: mock CDN, corresponding to `VITE_CND_ADDR`
