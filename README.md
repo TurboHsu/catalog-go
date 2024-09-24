@@ -1,4 +1,4 @@
-# Catalog Go
+# Catalog-go
 
 ## Getting started
 It logs cat. To get started, go with me
@@ -7,6 +7,30 @@ cd catalog-go
 go mod tidy
 go run . migrate
 go run .
+```
+
+## Deployment
+
+### Build
+
+To officially build the project, simply run `go build -ldflags "-s -w " .` to build the target binary.
+
+And if you want a systemd configuration example, here it is:
+
+```ini
+[Unit]
+Description=CatALog Golang backend
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/catalog-go/catalog-go
+Environment="GIN_MODE=release"
+WorkingDirectory=/opt/catalog-go
+
+[Install]
+WantedBy=default.target
 ```
 
 ## Configurations
