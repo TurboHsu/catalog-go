@@ -2,8 +2,6 @@ package model
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 var ALL = []interface{}{
@@ -21,8 +19,8 @@ type Cats struct {
 }
 
 type Reactions struct {
-	gorm.Model
+	ID      uint   `gorm:"primarykey"`
 	Emoji   string `gorm:"type:varchar(255)"`
-	Clients string `gorm:"type:text" json:"clients"`
+	Client  string `gorm:"type:varchar(255)"`
 	CatUUID string `gorm:"type:varchar(255)"`
 }

@@ -28,11 +28,8 @@ func newReactions(db *gorm.DB, opts ...gen.DOOption) reactions {
 	tableName := _reactions.reactionsDo.TableName()
 	_reactions.ALL = field.NewAsterisk(tableName)
 	_reactions.ID = field.NewUint(tableName, "id")
-	_reactions.CreatedAt = field.NewTime(tableName, "created_at")
-	_reactions.UpdatedAt = field.NewTime(tableName, "updated_at")
-	_reactions.DeletedAt = field.NewField(tableName, "deleted_at")
 	_reactions.Emoji = field.NewString(tableName, "emoji")
-	_reactions.Clients = field.NewField(tableName, "clients")
+	_reactions.Client = field.NewString(tableName, "client")
 	_reactions.CatUUID = field.NewString(tableName, "cat_uuid")
 
 	_reactions.fillFieldMap()
@@ -43,14 +40,11 @@ func newReactions(db *gorm.DB, opts ...gen.DOOption) reactions {
 type reactions struct {
 	reactionsDo reactionsDo
 
-	ALL       field.Asterisk
-	ID        field.Uint
-	CreatedAt field.Time
-	UpdatedAt field.Time
-	DeletedAt field.Field
-	Emoji     field.String
-	Clients   field.Field
-	CatUUID   field.String
+	ALL     field.Asterisk
+	ID      field.Uint
+	Emoji   field.String
+	Client  field.String
+	CatUUID field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -68,11 +62,8 @@ func (r reactions) As(alias string) *reactions {
 func (r *reactions) updateTableName(table string) *reactions {
 	r.ALL = field.NewAsterisk(table)
 	r.ID = field.NewUint(table, "id")
-	r.CreatedAt = field.NewTime(table, "created_at")
-	r.UpdatedAt = field.NewTime(table, "updated_at")
-	r.DeletedAt = field.NewField(table, "deleted_at")
 	r.Emoji = field.NewString(table, "emoji")
-	r.Clients = field.NewField(table, "clients")
+	r.Client = field.NewString(table, "client")
 	r.CatUUID = field.NewString(table, "cat_uuid")
 
 	r.fillFieldMap()
@@ -100,13 +91,10 @@ func (r *reactions) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (r *reactions) fillFieldMap() {
-	r.fieldMap = make(map[string]field.Expr, 7)
+	r.fieldMap = make(map[string]field.Expr, 4)
 	r.fieldMap["id"] = r.ID
-	r.fieldMap["created_at"] = r.CreatedAt
-	r.fieldMap["updated_at"] = r.UpdatedAt
-	r.fieldMap["deleted_at"] = r.DeletedAt
 	r.fieldMap["emoji"] = r.Emoji
-	r.fieldMap["clients"] = r.Clients
+	r.fieldMap["client"] = r.Client
 	r.fieldMap["cat_uuid"] = r.CatUUID
 }
 

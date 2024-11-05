@@ -3,8 +3,6 @@ package cat
 import (
 	"catalog-go/database/model"
 	"time"
-
-	"github.com/goccy/go-json"
 )
 
 type CatResponse struct {
@@ -28,25 +26,30 @@ func (r *CatResponse) FromCats(cat *model.Cats, fingerprint string) error {
 	r.Image = cat.Image
 	r.Thumbnail = cat.Thumbnail
 	r.CreatedAt = cat.CreatedAt
+	r.Reactions = []Reactions{}
 
-	for _, reaction := range cat.Reactions {
-		var clients []string
-		if len(reaction.Clients) > 2 { // Bigger than []
-			err := json.Unmarshal([]byte(reaction.Clients), &clients)
-			if err != nil {
-				return err
+	if len(cat.Reactions) > 0 {
+		reactionMap := make(map[string]*Reactions)
+		for _, reaction := range cat.Reactions {
+
+			if existingReaction, exists := reactionMap[reaction.Emoji]; exists {
+				existingReaction.Count++
+				if reaction.Client == fingerprint {
+					existingReaction.IsReacted = true
+				}
+			} else {
+				reactionMap[reaction.Emoji] = &Reactions{
+					Emoji:     reaction.Emoji,
+					Count:     1,
+					IsReacted: reaction.Client == fingerprint,
+				}
 			}
+		}
 
-			r.Reactions = append(r.Reactions, Reactions{
-				Emoji:     reaction.Emoji,
-				Count:     len(clients),
-				IsReacted: contains(clients, fingerprint),
-			})
+		for _, reaction := range reactionMap {
+			r.Reactions = append(r.Reactions, *reaction)
 		}
 	}
 
-	if len(r.Reactions) == 0 {
-		r.Reactions = []Reactions{}
-	}
 	return nil
 }
