@@ -21,6 +21,7 @@ func runServer(cmd *cobra.Command, args []string) {
 	if err := database.ConnectDatabase(); err != nil {
 		log.Fatalf("[F] Failed to connect database: %v\n", err)
 	}
+	migrateDatabase()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	var wg sync.WaitGroup

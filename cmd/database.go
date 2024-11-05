@@ -13,13 +13,16 @@ var migrateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		path := cmd.Flag("config").Value.String()
 		loadConfig(path)
-
-		if err := database.ConnectDatabase(); err != nil {
-			log.Fatalf("[F] Failed to connect database: %v\n", err)
-		}
-		if err := database.MigrateDatabase(); err != nil {
-			log.Fatalf("[F] Failed to migrate database: %v\n", err)
-		}
+		migrateDatabase()
 		log.Printf("[I] Database migrated\n")
 	},
+}
+
+func migrateDatabase() {
+	if err := database.ConnectDatabase(); err != nil {
+		log.Fatalf("[F] Failed to connect database: %v\n", err)
+	}
+	if err := database.MigrateDatabase(); err != nil {
+		log.Fatalf("[F] Failed to migrate database: %v\n", err)
+	}
 }
