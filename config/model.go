@@ -39,6 +39,7 @@ type TelegramBot struct {
 	Enable         bool
 	Token          string
 	PermittedUsers []int64
+	ServerURL      string
 }
 
 func DefaultConfig() Config {
@@ -68,6 +69,7 @@ func DefaultConfig() Config {
 				Enable:         false,
 				Token:          "",
 				PermittedUsers: []int64{},
+				ServerURL:      "https://api.telegram.org",
 			},
 		},
 		Store: Store{

@@ -1,6 +1,7 @@
 package telegram
 
 import (
+	"catalog-go/config"
 	"context"
 	"log"
 
@@ -13,6 +14,7 @@ func Run(token string, ctx context.Context) {
 		bot.WithMiddlewares(updateNilCatcherMiddleware),
 		bot.WithMiddlewares(mediaGroupMiddleware),
 		bot.WithDefaultHandler(defaultHandler),
+		bot.WithServerURL(config.CONFIG.Receiver.TelegramBot.ServerURL),
 	}
 	b, err := bot.New(token, opts...)
 	if err != nil {
