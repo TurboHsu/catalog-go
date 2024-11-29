@@ -41,7 +41,8 @@ func killHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	}
 	b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID: update.Message.Chat.ID,
-		Text:   "Killed " + uuid,
+		Text:   fmt.Sprintf("You just killed a cat with UUID `%s`.", uuid),
+		ParseMode: "Markdown",
 	})
 }
 
@@ -80,7 +81,7 @@ func postHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 
 	if update.Message.ReplyToMessage.MediaGroupID == "" {
 		caption := update.Message.ReplyToMessage.Caption
-		err := handleCat(b, ctx, update.Message.ReplyToMessage.Photo[len(update.Message.ReplyToMessage.Photo)-1].FileID,
+		uuid, err := handleCat(b, ctx, update.Message.ReplyToMessage.Photo[len(update.Message.ReplyToMessage.Photo)-1].FileID,
 			update.Message.ReplyToMessage.Photo[2].FileID, caption)
 		if err != nil {
 			b.SendMessage(ctx, &bot.SendMessageParams{
@@ -91,8 +92,9 @@ func postHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 			return
 		}
 		b.SendMessage(ctx, &bot.SendMessageParams{
-			ChatID: update.Message.Chat.ID,
-			Text:   "A cat has been posted",
+			ChatID:    update.Message.Chat.ID,
+			Text:      fmt.Sprintf("A cat has been posted with UUID `%s`.", uuid),
+			ParseMode: "Markdown",
 		})
 	} else { // Media group
 		ids, ok := mediaMap[update.Message.ReplyToMessage.MediaGroupID]
@@ -101,7 +103,7 @@ func postHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		if !ok {
 			b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID: update.Message.Chat.ID,
-				Text:   "Failed to get file: media group not found in map",
+				Text:   "Failed to get file: media group not found in map, try sending the pics again",
 			})
 			log.Printf("[E] Failed to get file: media group not found in map\n")
 			return
@@ -112,7 +114,7 @@ func postHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 
 			// Delete reaction
 			go func(id FileID) {
-				err := handleCat(b, ctx, id.Raw, id.Thumbnail, caption)
+				_, err := handleCat(b, ctx, id.Raw, id.Thumbnail, caption)
 				if err != nil {
 					b.SendMessage(ctx, &bot.SendMessageParams{
 						ChatID: update.Message.Chat.ID,
@@ -137,7 +139,7 @@ func postHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 func accessDeniedHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID: update.Message.Chat.ID,
-		Text:   "The cat god has denied your access to this command",
+		Text:   "The cat god has denied your access to this command!",
 	})
 }
 

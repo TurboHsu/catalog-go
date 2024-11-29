@@ -10,11 +10,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/google/uuid"
+	u "github.com/google/uuid"
 )
 
-func Place(image File, thumbnail File, caption string, ctx context.Context) (err error) {
-	uuid := uuid.NewString()
+func Place(image File, thumbnail File, caption string, ctx context.Context) (uuid string, err error) {
+	uuid = u.NewString()
 	// Save file
 	filename := config.CONFIG.Store.StorePath + "/" + uuid + "." + image.Type
 	if _, err := os.Stat(config.CONFIG.Store.StorePath); os.IsNotExist(err) {
@@ -22,13 +22,13 @@ func Place(image File, thumbnail File, caption string, ctx context.Context) (err
 	}
 	err = os.WriteFile(filename, image.Buffer, 0644)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	thumbnailFilename := config.CONFIG.Store.StorePath + "/" + uuid + "." + "thumbnail" + "." + thumbnail.Type
 	err = os.WriteFile(thumbnailFilename, thumbnail.Buffer, 0644)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	cat := model.Cats{
