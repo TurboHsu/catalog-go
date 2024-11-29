@@ -13,6 +13,7 @@ func Run(token string, ctx context.Context) {
 	opts := []bot.Option{
 		bot.WithMiddlewares(updateNilCatcherMiddleware),
 		bot.WithMiddlewares(mediaGroupMiddleware),
+		bot.WithMiddlewares(commandLoggerMiddleware),
 		bot.WithDefaultHandler(defaultHandler),
 		bot.WithServerURL(config.CONFIG.Receiver.TelegramBot.ServerURL),
 	}

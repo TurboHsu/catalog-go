@@ -176,3 +176,10 @@ func updateNilCatcherMiddleware(next bot.HandlerFunc) bot.HandlerFunc {
 		next(ctx, b, update)
 	}
 }
+
+func commandLoggerMiddleware(next bot.HandlerFunc) bot.HandlerFunc {
+	return func(ctx context.Context, b *bot.Bot, update *models.Update) {
+		log.Printf("[I] Received command: [%d] %s\n", update.Message.From.ID, update.Message.Text)
+		next(ctx, b, update)
+	}
+}
